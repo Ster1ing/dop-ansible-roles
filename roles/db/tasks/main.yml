@@ -1,7 +1,4 @@
 ---
-- name: Update packages
-  yum: name=* state=latest
-
 - name: Configure the PostgreSQL RPM repository
   dnf:
     name: "https://download.postgresql.org/pub/repos/yum/reporpms/F-34-x86_64/pgdg-fedora-repo-latest.noarch.rpm"
