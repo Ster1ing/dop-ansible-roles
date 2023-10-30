@@ -8,5 +8,5 @@
   with_items:
     - postgresql
     - postgresql-server
-  notify: Restart Postges
+  notify: Restart Postgres
 
