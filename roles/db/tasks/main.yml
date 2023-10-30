@@ -2,11 +2,11 @@
   ansible.builtin.debug:
     msg: 'Create task to install and preparing DB server'
 
-# This only for CI. For real deployment, we assign values to variables in real-time
 - name: "Install packages PosgreSQL"
-  dnf: "name={{ item }} state=present"
-  with_items:
+  ansible.builtin.apt:
+    name:
     - postgresql
     - postgresql-server
-  notify: Restart Postgres
+  update_cache: yes
+  #notify: Restart Postgres
 
