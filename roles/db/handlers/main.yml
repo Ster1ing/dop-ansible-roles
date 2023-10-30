@@ -1,6 +1,7 @@
 ---
-# handlers file for db
-- name: Restart Postgres
-  ansible.builtin.service:
-    name: postgresql
-    state: restarted    
+# handlers file for db  
+- name: restart postgresql
+  become: true
+  service:
+    name: "{{ postgresql_dist_service }}"
+    state: restarted

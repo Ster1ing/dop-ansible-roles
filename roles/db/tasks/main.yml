@@ -2,11 +2,8 @@
   ansible.builtin.debug:
     msg: 'Create task to install and preparing DB server'
 
-- name: "Install packages PostgreSQL"
-  ansible.builtin.apt:
-    name:
-      - postgresql
-      - postgresql-server
-    update_cache: yes
-  #notify: Restart Postgres
-
+- name: "Install packages"
+  apt: "name={{ item }} state=present"
+  with_items:
+    - postgresql
+    - postgresql-server
