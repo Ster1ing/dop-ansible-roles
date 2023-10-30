@@ -1,0 +1,6 @@
+---
+- name: Restart MariaDB
+  ansible.builtin.service:
+    name: mysql
+    state: restarted
+

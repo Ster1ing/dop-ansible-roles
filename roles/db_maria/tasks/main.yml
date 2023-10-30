@@ -1,0 +1,59 @@
+---
+- name: Start message
+  ansible.builtin.debug:
+    msg: 'Create task to install and preparing DB server'
+
+- name: Generate for database
+  ansible.builtin.set_fact:
+    login_user: root
+    login_pass: lookup('community.general.random_string')
+    root_pass: lookup('community.general.random_string')
+  when: lookup('ansible.builtin.env', 'CI') == 'true'
+
+- name: Install MariaDB
+  ansible.builtin.apt:
+    name:
+      - mariadb-server
+      - python3-pymysql
+    update_cache: yes
+
+- name: Start MariaDB
+  ansible.builtin.service:
+    name: mysql
+    state: started
+    enabled: yes
+
+- name: Set new password for root user
+  ansible.builtin.mysql_user:
+    name: "{{ login_user }}"
+    password: "{{ login_pass }}"
+    login_user: "{{ login_user }}"
+    login_password: "{{ root_pass }}"
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+    check_implicit_admin: yes
+
+- name: Create a new MariaDB database
+  ansible.builtin.mysql_db:
+    login_user: "{{ login_user }}"
+    login_password: "{{ login_pass }}"      
+    name: "{{ db_name }}"
+    state: present
+    encoding: utf8
+
+- name: Create user for app
+  ansible.builtin.mysql_user:
+      login_user: "{{ login_user }}"
+      login_password: "{{ login_pass }}"
+      name: "{{ db_user }}"
+      password: "{{ db_pass }}"
+      host: '%'
+      priv: "{{ db_name }}.*:ALL"
+      state: present
+
+- name: Add custom config 
+  ansible.builtin.copy:
+      dest: /etc/mysql/my.cnf
+      content: |
+        [mysqld]
+        bind-addres=0.0.0.0
+  notify: Restart MariaDB
