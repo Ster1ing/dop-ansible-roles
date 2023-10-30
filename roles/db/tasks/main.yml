@@ -5,8 +5,8 @@
 - name: "Install packages PosgreSQL"
   ansible.builtin.apt:
     name:
-    - postgresql
-    - postgresql-server
+      - postgresql
+      - postgresql-server
   update_cache: yes
   #notify: Restart Postgres
 
