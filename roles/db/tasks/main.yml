@@ -1,40 +1,12 @@
----
-- name: Configure the PostgreSQL RPM repository
-  dnf:
-    name: "https://download.postgresql.org/pub/repos/yum/reporpms/F-34-x86_64/pgdg-fedora-repo-latest.noarch.rpm"
-    state: present
+- name: Start message
+  ansible.builtin.debug:
+    msg: 'Create task to install and preparing DB server'
 
-- name: Install PostgreSQL server
-  dnf:
-    name: postgresql14-server
-    state: present
+# This only for CI. For real deployment, we assign values to variables in real-time
+- name: "Install packages PosgreSQL"
+  dnf: "name={{ item }} state=present"
+  with_items:
+    - postgresql
+    - postgresql-server
+  notify: Restart Postges
 
-- name: Check if Database is initialized
-  stat:
-    path: /var/lib/pgsql/14/data/pg_hba.conf
-  register: result
-
-- name: Initialize the database
-  shell: /usr/pgsql-14/bin/postgresql-14-setup initdb
-  when: not result.stat.exists
-
-- name: Allow remote connection to PostgreSQL database
-  copy:
-    src: /home/admin/middleware/stack/ansible/playbooks/postgresql-setup/pg_hba.conf
-    dest: /var/lib/pgsql/14/data/
-
-- name: Allow PostgreSQL to listen on all interfaces
-  copy:
-    src: /home/admin/middleware/stack/ansible/playbooks/postgresql-setup/postgresql.conf
-    dest: /var/lib/pgsql/14/data/
-
-- name: Start the database service
-  service:
-    name: postgresql-14
-    state: started
-
-- name: Allow PostgreSQL database service
-  firewalld:
-    service: postgresql
-    permanent: yes
-    state: enabled
