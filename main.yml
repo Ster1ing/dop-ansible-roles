@@ -6,10 +6,10 @@
   roles:
     - role: db
 
-- import_playbook: server.yml
-#- name: Install and configure Apache
-#  hosts: server
-#  become: true
+#- import_playbook: server.yml
+- name: Install and configure Apache
+  hosts: server
+  become: true
 
-#  roles:
-#    - role: server      
+  roles:
+    - role: server      

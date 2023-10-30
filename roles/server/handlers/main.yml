@@ -1,2 +1,5 @@
 ---
-# handlers file for server
+- name: Restart Apache
+  ansible.builtin.service:
+    name: apache2
+    state: restarted
