@@ -1,2 +1,6 @@
 ---
 # handlers file for db
+- name: Restart Apache
+  ansible.builtin.service:
+    - name: postgresql
+      state: restarted    
