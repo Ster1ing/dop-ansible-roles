@@ -1,1 +1,15 @@
 ---
+- name: Install and configure Apache
+  hosts: server
+  become: true
+
+  roles:
+    - role: server
+
+- name: Install and configure PostgreSQL
+  hosts: db
+  become: true
+
+  roles:
+    - role: db
+      
