@@ -19,11 +19,6 @@
   register: postgres_data    
 
 - name: "Initialize PostgreSQL"
-  shell: "postgresql-setup initdb"
+  shell: /usr/pgsql-14/bin/postgresql-14-setup initdb
   when: not postgres_data.stat.exists
 
-- name: "Start and enable services"
-  service: "name={{ item }} state=started enabled=yes"
-  with_items:
-    - postgresql
-  notify: restart postgresql
