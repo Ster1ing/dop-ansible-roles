@@ -36,6 +36,7 @@
       - php8.2-intl
       - php8.2-xml
       - php8.2-mysql
+      - php8.2-pgsql
 
 - name: Install Composer
   ansible.builtin.get_url:
