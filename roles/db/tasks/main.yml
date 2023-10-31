@@ -18,7 +18,7 @@
 - name: "Install Python packages"
   pip: "name={{ item }}  state=present"
   with_items:
-    - psycopg2-binary
+    - python3-psycopg2
 
 - name: "Find out if PostgreSQL is initialized"
   ansible.builtin.stat:
@@ -86,13 +86,13 @@
   become: true
   become_user: postgres 
 
-#- name: GRANT ALL PRIVILEGES ON SCHEMA public 
-#  postgresql_privs:
-#    db: "{{ db_name }}"
-#    privs: ALL
-#    type: schema
-#    objs: public 
-#    role: "{{ db_user }}"
+- name: GRANT ALL PRIVILEGES ON SCHEMA public 
+  postgresql_privs:
+    db: "{{ db_name }}"
+    privs: ALL
+    type: schema
+    objs: public 
+    role: "{{ db_user }}"
 
 - name: "Allow md5 connection for the db user"
   postgresql_pg_hba:
