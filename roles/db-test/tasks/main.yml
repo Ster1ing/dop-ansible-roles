@@ -113,7 +113,6 @@
     state: directory
     mode: 0700
 
----
 - name: Configure global settings.
   lineinfile:
     dest: "{{ postgresql_config_path }}/postgresql.conf"
