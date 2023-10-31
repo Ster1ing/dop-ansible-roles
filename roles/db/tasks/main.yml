@@ -20,20 +20,15 @@
   with_items:
     - psycopg2-binary
 
-- name: "Find out if PostgreSQL is initialized"
-  ansible.builtin.stat:
-    path: "/var/lib/pgsql/data/pg_hba.conf"
-  register: postgres_data    
-
-#- name: "Initialize PostgreSQL"
-#  shell: /usr/pgsql-14/bin/postgresql-setup initdb
-#  when: not postgres_data.stat.exists
+#- name: "Find out if PostgreSQL is initialized"
+#  ansible.builtin.stat:
+#    path: "/var/lib/pgsql/data/pg_hba.conf"
+#  register: postgres_data    
 
 - name: "Start and enable services"
   service: "name={{ item }} state=started enabled=yes"
   with_items:
     - postgresql
-  #notify: restart postgresql
 
 - name: Create the database specified in vars
   become: true
@@ -64,18 +59,6 @@
       role_attr_flags=NOSUPERUSER,NOCREATEDB
       state=present
 
-#- name: Create symbolic link 
-#  file:
-#    src: "/private/tmp/.s.PGSQL.5432"
-#    dest: "/var/run/postgresql/.s.PGSQL.5432"
-#    state: link
-
-#- name: Copy project to server
-#  ansible.builtin.copy:
-#    src: /tmp/.s.PGSQL.5432
-#    dest: /var/run/postgresql/.s.PGSQL.5432
-#    remote_src: true
-
 - name: "Grant db user access to app db"
   postgresql_privs:
     type: database
@@ -85,23 +68,3 @@
     privs: ALL
   become: true
   become_user: postgres 
-
-#- name: GRANT ALL PRIVILEGES ON SCHEMA public 
-#  postgresql_privs:
-#    db: "{{ db_name }}"
-#    privs: ALL
-#    type: schema
-#    objs: public 
-#    role: "{{ db_user }}"
-
-- name: "Allow md5 connection for the db user"
-  postgresql_pg_hba:
-    dest: /etc/postgresql/14/main/pg_hba.conf
-    contype: host
-    databases: all
-    method: md5
-    users: "{{ db_user }}"
-    create: true
-  become: true
-  become_user: postgres
-  notify: restart postgresql
