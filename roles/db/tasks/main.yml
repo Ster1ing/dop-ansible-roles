@@ -17,6 +17,11 @@
     dest: /etc/postgresql/14/main/pg_hba.conf
   notify: restart postgresql
 
+- name: "Start and enable services"
+  service: "name={{ item }} state=started enabled=yes"
+  with_items:
+  - postgresql
+
 - name: Create a PostgreSQL database
   postgresql_db:
     name: "{{ db_name }}"  # Replace with your desired database name
