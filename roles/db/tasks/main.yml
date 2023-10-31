@@ -1,81 +1,32 @@
-- name: Start message
-  ansible.builtin.debug:
-    msg: 'Create task to install and preparing DB server'
 
-- name: Generate for database
-  ansible.builtin.set_fact:
-    login_user: root
-    login_pass: lookup('community.general.random_string')
-    root_pass: lookup('community.general.random_string')
-  when: lookup('ansible.builtin.env', 'CI') == 'true'
+- name: Update APT cache
+  apt:
+    update_cache: yes
 
-- name: "Install packages"
-  apt: "name={{ item }} state=present"
-  with_items:
-    - postgresql
-    - postgresql-client
+- name: Install PostgreSQL and psycopg2 (Python library for PostgreSQL)
+  apt:
+    name: "{{ item }}"
+  loop:
+    - postgresql-16
+    - postgresql-contrib
+    - python3-psycopg2  # Install psycopg2 for Python 3
 
-- name: "Install Python packages"
-  pip: "name={{ item }}  state=present"
-  with_items:
-    - psycopg2-binary
+- name: Configure PostgreSQL authentication
+  template:
+    src: pg_hba.conf.j2
+    dest: /etc/postgresql/16/main/pg_hba.conf
+  notify:
+    - Reload PostgreSQL
 
-- name: "Find out if PostgreSQL is initialized"
-  ansible.builtin.stat:
-    path: "/var/lib/pgsql/data/pg_hba.conf"
-  register: postgres_data    
+- name: Create a PostgreSQL database
+  postgresql_db:
+    name: {{ db_name }}  # Replace with your desired database name
+    state: present
 
-#- name: "Initialize PostgreSQL"
-#  shell: /usr/pgsql-14/bin/postgresql-setup initdb
-#  when: not postgres_data.stat.exists
-
-- name: "Start and enable services"
-  service: "name={{ item }} state=started enabled=yes"
-  with_items:
-    - postgresql
-  #notify: restart postgresql
-
-- name: Create the database specified in vars
-  become: true
-  become_user: postgres
-  postgresql_db: name={{ db_name }}
-      template='template0'
-      state=present
-
-- name: Ensure user has access to the new database
-  become: true
-  become_user: postgres
-  postgresql_user: db={{ db_name }}
-      name={{ db_user }}
-      password={{ db_pass }}
-      priv=ALL
-      state=present
-
-- name: Ensure user does not have unnecessary permissions
-  become: true
-  become_user: postgres
-  postgresql_user: name={{ db_user }}
-      role_attr_flags=NOSUPERUSER,NOCREATEDB
-      state=present
-
-- name: "Grant db user access to app db"
-  postgresql_privs:
-    type: database
-    database: "{{ db_name }}"
-    roles: "{{ db_user }}"
-    grant_option: no
-    privs: all
-  become: true
-  become_user: postgres      
-
-- name: "Allow md5 connection for the db user"
-  postgresql_pg_hba:
-    dest: "/var/lib/pgsql/data/pg_hba.conf"
-    contype: host
-    databases: all
-    method: md5
-    users: "{{ db_user }}"
-    create: true
-  become: true
-  become_user: postgres
-  notify: restart postgres
+- name: Create a PostgreSQL user and grant privileges
+  postgresql_user:
+    db: {{ db_name }}   # Replace with your desired database name
+    name: {{ db_user }}   # Replace with your desired username
+    password: {{ db_pass }}  # Replace with your desired password
+    priv: "{{ db_name }}.*:ALL"
+    notify: restart postgresql

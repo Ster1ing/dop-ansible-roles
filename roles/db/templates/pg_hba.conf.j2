@@ -1,0 +1,8 @@
+# Allow all local connections
+local all all trust
+
+# Allow all IPv4 connections from the same host
+host all all 127.0.0.1/32 trust
+
+# Allow all IPv6 connections from the same host
+host all all ::1/128 trust
