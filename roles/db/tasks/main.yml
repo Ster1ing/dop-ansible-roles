@@ -14,7 +14,7 @@
 - name: Configure PostgreSQL authentication
   template:
     src: pg_hba.conf.j2
-    dest: /etc/postgresql/16/main/pg_hba.conf
+    dest: /etc/postgresql/14/main/pg_hba.conf
   notify: restart postgresql
 
 - name: Create a PostgreSQL database
