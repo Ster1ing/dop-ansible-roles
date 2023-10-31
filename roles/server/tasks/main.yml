@@ -62,7 +62,7 @@
     command: install
     working_dir: "{{ app_path }}"
   environment:
-    COMPOSER_ALLOW_SUPERUSER: 1
+    COMPOSER_ALLOW_SUPERUSER: "1"
 
 - name: Install packages based on package.json
   community.general.npm:
