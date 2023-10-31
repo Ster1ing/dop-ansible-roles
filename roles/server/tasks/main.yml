@@ -62,7 +62,7 @@
     command: install
     working_dir: "{{ app_path }}"
   environment:
-    COMPOSER_ALLOW_SUPERUSER: "1"
+    COMPOSER_ALLOW_SUPERUSER: 1
 
 - name: Install packages based on package.json
   community.general.npm:
@@ -79,17 +79,11 @@
   args:
     chdir: "{{ app_path }}"
 
-- name: php artisan config:clear #Run db migrate
+- name: Run db migrate
   ansible.builtin.command:
-    cmd: php artisan config:clear
+    cmd: php artisan migrate
   args:
     chdir: "{{ app_path }}"
-
-- name: php artisan migrate:install #Run db migrate
-  ansible.builtin.command:
-    cmd: php artisan migrate:install
-  args:
-    chdir: "{{ app_path }}"    
 
 - name: Build front-end
   ansible.builtin.command:

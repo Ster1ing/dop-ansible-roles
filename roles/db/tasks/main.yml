@@ -70,7 +70,7 @@
     database: "{{ db_name }}"
     roles: "{{ db_user }}"
     grant_option: no
-    privs: all
+    privs: ALL ON ALL TABLES 
   become: true
   become_user: postgres      
 
