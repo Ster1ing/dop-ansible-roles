@@ -44,9 +44,9 @@
 
 - name: Configure PostgreSQL authentication
   template:
-  src: pg_hba.conf.j2
-  dest: /etc/postgresql/14/main/pg_hba.conf
-
+    src: pg_hba.conf.j2
+    dest: /etc/postgresql/14/main/pg_hba.conf
+  notify: restart postgres
 
 - name: Ensure user has access to the new database
   become: true
