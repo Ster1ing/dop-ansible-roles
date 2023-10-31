@@ -9,7 +9,8 @@
   loop:
     - postgresql
     - postgresql-contrib
-    - python3-psycopg2  # Install psycopg2 for Python 3
+    - psycopg2-binary
+    #- python3-psycopg2  # Install psycopg2 for Python 3
 
 - name: Configure PostgreSQL authentication
   template:
