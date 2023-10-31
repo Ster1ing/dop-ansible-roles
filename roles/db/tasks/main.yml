@@ -41,6 +41,7 @@
   postgresql_db: name={{ db_name }}
       template='template0'
       state=present
+
 - name: Ensure user has access to the new database
   become: true
   become_user: postgres
@@ -49,9 +50,20 @@
       password={{ db_pass }}
       priv=ALL
       state=present
+
 - name: Ensure user does not have unnecessary permissions
   become: true
   become_user: postgres
   postgresql_user: name={{ db_user }}
       role_attr_flags=NOSUPERUSER,NOCREATEDB
       state=present
+
+- name: "Grant db user access to app db"
+  postgresql_privs:
+    type: database
+    database: "{{ db_name }}"
+    roles: "{{ db_user }}"
+    grant_option: no
+    privs: all
+  become: true
+  become_user: postgres      
