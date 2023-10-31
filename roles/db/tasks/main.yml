@@ -9,8 +9,11 @@
   loop:
     - postgresql
     - postgresql-contrib
-    - psycopg2-binary
-    #- python3-psycopg2  # Install psycopg2 for Python 3
+
+- name: "Install Python packages"
+  pip: "name={{ item }}  state=present"
+  with_items:
+    - psycopg2-binary    
 
 - name: Configure PostgreSQL authentication
   template:
