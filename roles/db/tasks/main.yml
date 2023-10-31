@@ -64,11 +64,17 @@
       role_attr_flags=NOSUPERUSER,NOCREATEDB
       state=present
 
-- name: Copy project to server
-  ansible.builtin.copy:
-    src: /tmp/.s.PGSQL.5432
-    dest: /var/run/postgresql/.s.PGSQL.5432
-    remote_src: true
+- name: Create symbolic link 
+  file:
+    src: "/tmp/.s.PGSQL.5432"
+    dest: "/var/run/postgresql/.s.PGSQL.5432"
+    state: link
+
+#- name: Copy project to server
+#  ansible.builtin.copy:
+#    src: /tmp/.s.PGSQL.5432
+#    dest: /var/run/postgresql/.s.PGSQL.5432
+#    remote_src: true
 
 - name: "Grant db user access to app db"
   postgresql_privs:
