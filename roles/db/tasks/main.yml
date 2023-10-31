@@ -18,7 +18,7 @@
 - name: "Install Python packages"
   pip: "name={{ item }}  state=present"
   with_items:
-    - python3-psycopg2
+    - psycopg2-binary
 
 - name: "Find out if PostgreSQL is initialized"
   ansible.builtin.stat:
