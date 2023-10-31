@@ -7,7 +7,7 @@
   apt:
     name: "{{ item }}"
   loop:
-    - postgresql-16
+    - postgresql
     - postgresql-contrib
     - python3-psycopg2  # Install psycopg2 for Python 3
 
