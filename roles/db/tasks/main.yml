@@ -35,12 +35,39 @@
     - postgresql
   #notify: restart postgresql
 
-- name: Create the database specified in vars
+- name: Create the databases
+  community.postgresql.postgresql_db:
+    name: "{{ db_name }}"
+    encoding: "UTF-8"
   become: true
   become_user: postgres
-  postgresql_db: name={{ db_name }}
-      template='template0'
-      state=present
+  
+
+- name: Create the users
+  community.postgresql.postgresql_user:
+    db: "{{ db_name }}"
+    name: "{{ db_user }}"
+    password: "{{ db_pass | default(omit) }}"
+  become: true
+  become_user: postgres
+  environment:
+    PGOPTIONS: "-c password_encryption=scram-sha-256"
+
+- name: Create the schemas
+  community.postgresql.postgresql_schema:
+    db: "{{ db_name }}"
+    name: "{{ db_user }}"
+    owner: "{{ db_user }}"
+  become: true
+  become_user: postgres
+
+
+#- name: Create the database specified in vars
+#  become: true
+#  become_user: postgres
+#  postgresql_db: name={{ db_name }}
+#      template='template0'
+#      state=present
 
 - name: Configure PostgreSQL authentication
   template:
