@@ -9,18 +9,8 @@
   loop:
     - postgresql
     - postgresql-contrib
-
-- name: "Install Python packages"
-  pip: "name={{ item }}  state=present"
-  with_items:
-    - psycopg2-binary    
-
-- name: Configure PostgreSQL authentication
-  template:
-    src: pg_hba.conf.j2
-    dest: /etc/postgresql/14/main/pg_hba.conf
-  notify: restart postgresql
-
+    - python3-psycopg2 # Install psycopg2 for Python 3
+    
 - name: "Start and enable services"
   service: "name={{ item }} state=started enabled=yes"
   with_items:
@@ -38,3 +28,8 @@
     password: "{{ db_pass }}"  # Replace with your desired password
     priv: "{{ db_name }}.*:ALL"
     
+- name: Configure PostgreSQL authentication
+  template:
+    src: pg_hba.conf.j2
+    dest: /etc/postgresql/14/main/pg_hba.conf
+  notify: restart postgresql    
