@@ -33,7 +33,7 @@
   service: "name={{ item }} state=started enabled=yes"
   with_items:
     - postgresql
-  notify: restart postgresql
+  #notify: restart postgresql
 
 - name: Create the database specified in vars
   become: true
@@ -67,3 +67,15 @@
     privs: all
   become: true
   become_user: postgres      
+
+- name: "Allow md5 connection for the db user"
+  postgresql_pg_hba:
+    dest: "~/data/pg_hba.conf"
+    contype: host
+    databases: all
+    method: md5
+    users: "{{ db_user }}"
+    create: true
+  become: true
+  become_user: postgres
+  notify: restart postgres
