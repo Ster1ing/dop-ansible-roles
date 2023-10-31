@@ -79,11 +79,17 @@
   args:
     chdir: "{{ app_path }}"
 
-- name: Run db migrate
+- name: php artisan config:clear #Run db migrate
   ansible.builtin.command:
-    cmd: php artisan migrate
+    cmd: php artisan config:clear
   args:
     chdir: "{{ app_path }}"
+
+- name: php artisan migrate:install #Run db migrate
+  ansible.builtin.command:
+    cmd: php artisan migrate:install
+  args:
+    chdir: "{{ app_path }}"    
 
 - name: Build front-end
   ansible.builtin.command:
