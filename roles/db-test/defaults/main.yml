@@ -70,4 +70,4 @@ postgresql_users:
 #   state: # defaults to 'present'
 
 # Whether to output user data when managing users.
-postgres_users_no_log: true
+postgres_users_no_log: false
