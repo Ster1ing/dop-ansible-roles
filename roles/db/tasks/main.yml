@@ -21,12 +21,25 @@
     name: "{{ db_name }}"  # Replace with your desired database name
     state: present
 
-- name: Create a PostgreSQL user and grant privileges
+
+- name: "Create db user"
   postgresql_user:
-    db: "{{ db_name }}"   # Replace with your desired database name
-    name: "{{ db_user }}"   # Replace with your desired username
-    password: "{{ db_pass }}"  # Replace with your desired password
-    priv: "{{ db_name }}.*:ALL"
+    state: present
+    name: "{{ db_user }}"
+    password: "{{ db_password }}"
+  become: true
+  become_user: postgres    
+    #priv: "{{ db_name }}.*:ALL"
+
+- name: "Grant db user access to app db"
+  postgresql_privs:
+    type: database
+    database: "{{ db_name }}"
+    roles: "{{ db_user }}"
+    grant_option: no
+    privs: all
+  become: true
+  become_user: postgres
     
 - name: Configure PostgreSQL authentication
   template:
