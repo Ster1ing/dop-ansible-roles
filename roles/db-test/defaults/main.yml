@@ -55,7 +55,7 @@ postgresql_databases:
 postgresql_users:
   - name: "{{ db_user }}"
     password: "{{ db_pass }}"
-    priv: ALL
+    privs: ALL
 # - name: jdoe #required; the rest are optional
 #   password: # defaults to not set
 #   encrypted: # defaults to not set

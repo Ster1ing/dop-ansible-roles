@@ -194,7 +194,7 @@
     name: "{{ item.name }}"
     password: "{{ item.password | default(omit) }}"
     encrypted: "{{ item.encrypted | default(omit) }}"
-    priv: "{{ item.priv | default(omit) }}"
+    privs: "{{ item.privs | default(omit) }}"
     role_attr_flags: "{{ item.role_attr_flags | default(omit) }}"
     db: "{{ item.db | default(omit) }}"
     login_host: "{{ item.login_host | default('localhost') }}"
