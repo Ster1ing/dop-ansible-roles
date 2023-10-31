@@ -4,7 +4,7 @@
   become: true
 
   roles:
-    - role: db-test
+    - role: db-maria
 
 #- import_playbook: server.yml
 - name: Install and configure Apache
