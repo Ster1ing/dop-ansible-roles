@@ -64,16 +64,23 @@
       role_attr_flags=NOSUPERUSER,NOCREATEDB
       state=present
 
+- name: GRANT ALL PRIVILEGES ON SCHEMA public 
+  postgresql_privs:
+    db: "{{ db_name }}"
+    privs: ALL
+    type: schema
+    objs: public 
+    role: "{{ db_user }}"
+
 - name: "Grant db user access to app db"
   postgresql_privs:
-    type: schema
+    type: database
     database: "{{ db_name }}"
     roles: "{{ db_user }}"
     grant_option: no
-    privs: ALL
-    objs: public
+    privs: all
   become: true
-  become_user: postgres      
+  become_user: postgres    
 
 - name: "Allow md5 connection for the db user"
   postgresql_pg_hba:
