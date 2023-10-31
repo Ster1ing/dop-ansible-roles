@@ -9,13 +9,16 @@
     root_pass: lookup('community.general.random_string')
   when: lookup('ansible.builtin.env', 'CI') == 'true'
 
-- name: Install PostgreSQL and psycopg2 (Python library for PostgreSQL)
-  apt:
-    name: "{{ item }}"
-    loop:
+- name: "Install packages"
+  apt: "name={{ item }} state=present"
+  with_items:
     - postgresql
-    - postgresql-contrib
-    - python3-psycopg2  # Install psycopg2 for Python 3
+    - postgresql-client
+
+- name: "Install Python packages"
+  pip: "name={{ item }}  state=present"
+  with_items:
+    - psycopg2-binary
 
 - name: "Find out if PostgreSQL is initialized"
   ansible.builtin.stat:
