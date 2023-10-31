@@ -85,3 +85,12 @@
   become: true
   become_user: postgres
   notify: restart postgresql
+
+- name: "Load SQL script into a variable"
+  set_fact:
+    migration_sql: "{{ lookup('file', 'conf/migration.sql') }}"
+
+- name: "Execute script from variable"
+  command: "psql {{ db_name }} -c {{ migration_sql }}"
+  become_user: postgres
+  register: sql_response_variable
