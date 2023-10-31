@@ -2,6 +2,13 @@
   ansible.builtin.debug:
     msg: 'Create task to install and preparing DB server'
 
+- name: Generate for database
+  ansible.builtin.set_fact:
+    login_user: root
+    login_pass: lookup('community.general.random_string')
+    root_pass: lookup('community.general.random_string')
+  when: lookup('ansible.builtin.env', 'CI') == 'true'
+
 - name: "Install packages"
   apt: "name={{ item }} state=present"
   with_items:
@@ -27,3 +34,24 @@
   with_items:
     - postgresql
   notify: restart postgresql
+
+- name: Create the database specified in vars
+  become: true
+  become_user: postgres
+  postgresql_db: name={{ db_name }}
+      template='template0'
+      state=present
+- name: Ensure user has access to the new database
+  become: true
+  become_user: postgres
+  postgresql_user: db={{ db_name }}
+      name={{ db_user }}
+      password={{ db_password }}
+      priv=ALL
+      state=present
+- name: Ensure user does not have unnecessary permissions
+  become: true
+  become_user: postgres
+  postgresql_user: name={{ db_user }}
+      role_attr_flags=NOSUPERUSER,NOCREATEDB
+      state=present
