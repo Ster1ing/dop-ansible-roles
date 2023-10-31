@@ -66,11 +66,11 @@
 
 - name: "Grant db user access to app db"
   postgresql_privs:
-    type: database,schema
+    type: database
     database: "{{ db_name }}"
     roles: "{{ db_user }}"
     grant_option: no
-    privs: all
+    privs: ALL
     objs: public
   become: true
   become_user: postgres      
